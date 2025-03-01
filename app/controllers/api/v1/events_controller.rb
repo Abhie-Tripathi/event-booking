@@ -32,7 +32,6 @@ module Api
         authorize @event
 
         if @event.update(event_params)
-          # Send notification to booked customers about event update
           NotifyBookedCustomersJob.perform_later(@event.id)
           render json: @event
         else
@@ -53,7 +52,13 @@ module Api
       end
 
       def event_params
-        params.require(:event).permit(:title, :description, :venue, :start_date, :end_date)
+        params.require(:event).permit(:title, :description, :venue, :start_date, :end_date).tap do |whitelisted|
+          if params[:event][:event_date].present?
+            date = Time.zone.parse(params[:event][:event_date])
+            whitelisted[:start_date] = date
+            whitelisted[:end_date] = date.end_of_day
+          end
+        end
       end
     end
   end

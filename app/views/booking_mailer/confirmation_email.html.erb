@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Booking Confirmation</h1>
+    <p>Dear <%= @customer.name %>,</p>
+    
+    <p>Your booking has been confirmed for the following event:</p>
+    
+    <h2><%= @event.title %></h2>
+    <p><strong>Venue:</strong> <%= @event.venue %></p>
+    <p><strong>Date:</strong> <%= @event.start_date.strftime("%B %d, %Y") %></p>
+    
+    <h3>Booking Details:</h3>
+    <ul>
+      <li>Ticket Type: <%= @ticket.category %></li>
+      <li>Quantity: <%= @booking.quantity %></li>
+      <li>Total Amount: $<%= @booking.total_amount %></li>
+      <li>Booking Status: <%= @booking.status.titleize %></li>
+      <li>Booking Reference: #<%= @booking.id %></li>
+    </ul>
+    
+    <p>Thank you for your booking!</p>
+  </body>
+</html> 

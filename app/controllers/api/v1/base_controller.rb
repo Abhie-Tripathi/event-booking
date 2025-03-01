@@ -18,18 +18,53 @@ module Api
         end
       end
 
-      def authenticate_event_organizer_or_customer!
-        token = request.headers['Authorization'].split(' ').last
-        begin
-          jwt_payload = JWT.decode(token, Rails.application.credentials.secret_key_base).first
-          
-          if jwt_payload['sub'].start_with?('EventOrganizer')
-            @current_user = EventOrganizer.find(jwt_payload['sub'].split('_').last)
-          else
-            @current_user = Customer.find(jwt_payload['sub'].split('_').last)
+      def authenticate_event_organizer!
+        auth_header = request.headers['Authorization']
+        if auth_header.present? && auth_header.start_with?('Bearer ')
+          token = auth_header.split(' ').last
+          begin
+            jwt_payload = JWT.decode(token, Rails.application.credentials.secret_key_base).first
+            Rails.logger.info "JWT Payload: #{jwt_payload.inspect}"
+            
+            if jwt_payload['scp'] == 'api_v1_event_organizer'
+              @current_user = EventOrganizer.find(jwt_payload['sub'])
+              Rails.logger.info "Found event organizer: #{@current_user.inspect}"
+            else
+              Rails.logger.info "Invalid scope: #{jwt_payload['scp']}"
+              render json: { error: 'Must be an event organizer' }, status: :forbidden
+            end
+          rescue JWT::DecodeError => e
+            Rails.logger.error "JWT decode error: #{e.message}"
+            render json: { error: e.message }, status: :unauthorized
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error "Event organizer not found: #{e.message}"
+            render json: { error: 'Event organizer not found' }, status: :unauthorized
           end
-        rescue JWT::DecodeError => e
-          render json: { error: e.message }, status: :unauthorized
+        else
+          Rails.logger.info "Missing or invalid Authorization header: #{auth_header}"
+          render json: { error: 'Not authenticated' }, status: :unauthorized
+        end
+      end
+
+      def authenticate_event_organizer_or_customer!
+        auth_header = request.headers['Authorization']
+        if auth_header.present? && auth_header.start_with?('Bearer ')
+          token = auth_header.split(' ').last
+          begin
+            jwt_payload = JWT.decode(token, Rails.application.credentials.secret_key_base).first
+            
+            if jwt_payload['scp'] == 'api_v1_event_organizer'
+              @current_user = EventOrganizer.find(jwt_payload['sub'])
+            else
+              @current_user = Customer.find(jwt_payload['sub'])
+            end
+          rescue JWT::DecodeError => e
+            render json: { error: e.message }, status: :unauthorized
+          rescue ActiveRecord::RecordNotFound => e
+            render json: { error: 'User not found' }, status: :unauthorized
+          end
+        else
+          render json: { error: 'Not authenticated' }, status: :unauthorized
         end
       end
 

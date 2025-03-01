@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   # API routes
   namespace :api do
     namespace :v1 do
@@ -8,26 +10,36 @@ Rails.application.routes.draw do
                   sessions: 'api/v1/event_organizers/sessions',
                   registrations: 'api/v1/event_organizers/registrations'
                 },
-                path: 'event_organizers',
-                defaults: { format: :json }
+                path: 'event_organizers'
       
       devise_for :customers,
                 controllers: {
                   sessions: 'api/v1/customers/sessions',
                   registrations: 'api/v1/customers/registrations'
                 },
-                path: 'customers',
-                defaults: { format: :json }
+                path: 'customers'
 
       resources :events do
         resources :tickets
+        resources :bookings, only: [:index], controller: 'events/bookings'
       end
       
-      resources :bookings do
+      resources :bookings, only: [:create, :index, :show] do
         member do
-          put :cancel
+          post :cancel
         end
       end
+
+      namespace :event_organizers do
+        post 'sign_in', to: 'sessions#create'
+      end
+
+      namespace :customers do
+        post 'sign_in', to: 'sessions#create'
+      end
+
+      resources :event_organizers, only: [:create]
+      resources :customers, only: [:create]
     end
   end
 

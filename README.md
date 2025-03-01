@@ -2,6 +2,20 @@
 
 A Ruby on Rails API for event booking and management.
 
+## API Documentation
+
+The API documentation is available through Swagger UI at `/api-docs`. After starting the server, visit:
+
+```
+http://localhost:3000/api-docs
+```
+
+This provides an interactive documentation where you can:
+- View all available endpoints
+- Read detailed request/response schemas
+- Test the API endpoints directly from the browser
+- View authentication requirements for protected routes
+
 ## Authentication
 
 The API uses JWT (JSON Web Token) authentication. Include the JWT token in the Authorization header for authenticated requests:

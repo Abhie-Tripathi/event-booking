@@ -1,0 +1,18 @@
+Booking Confirmation
+
+Dear <%= @customer.name %>,
+
+Your booking has been confirmed for the following event:
+
+<%= @event.title %>
+Venue: <%= @event.venue %>
+Date: <%= @event.start_date.strftime("%B %d, %Y") %>
+
+Booking Details:
+- Ticket Type: <%= @ticket.category %>
+- Quantity: <%= @booking.quantity %>
+- Total Amount: $<%= @booking.total_amount %>
+- Booking Status: <%= @booking.status.titleize %>
+- Booking Reference: #<%= @booking.id %>
+
+Thank you for your booking! 

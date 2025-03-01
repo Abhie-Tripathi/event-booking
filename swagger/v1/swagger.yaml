@@ -1,0 +1,1268 @@
+---
+openapi: 3.0.1
+info:
+  title: Event Booking API
+  version: v1
+  description: This is the API documentation for the Event Booking system. It provides
+    endpoints for event organizers to create and manage events, and for customers
+    to browse events and make bookings.
+paths:
+  "/api/v1/event_organizers":
+    post:
+      summary: Register event organizer
+      tags:
+      - Event Organizers
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: event organizer registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Registered successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      token:
+                        type: string
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_organizer:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: organizer@example.com
+                    password:
+                      type: string
+                      example: password123
+                    name:
+                      type: string
+                      example: John Doe
+                  required:
+                  - email
+                  - password
+                  - name
+  "/api/v1/event_organizers/sign_in":
+    post:
+      summary: Login event organizer
+      tags:
+      - Event Organizers
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Logged in successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      token:
+                        type: string
+        '401':
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event_organizer:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: organizer@example.com
+                    password:
+                      type: string
+                      example: password123
+                  required:
+                  - email
+                  - password
+  "/api/v1/customers":
+    post:
+      summary: Register customer
+      tags:
+      - Customers
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: customer registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Registered successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      token:
+                        type: string
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: customer@example.com
+                    password:
+                      type: string
+                      example: password123
+                    name:
+                      type: string
+                      example: Jane Smith
+                  required:
+                  - email
+                  - password
+                  - name
+  "/api/v1/customers/sign_in":
+    post:
+      summary: Login customer
+      tags:
+      - Customers
+      security: []
+      parameters: []
+      responses:
+        '200':
+          description: login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Logged in successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      token:
+                        type: string
+        '401':
+          description: invalid credentials
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: customer@example.com
+                    password:
+                      type: string
+                      example: password123
+                  required:
+                  - email
+                  - password
+  "/api/v1/bookings":
+    get:
+      summary: List user bookings
+      tags:
+      - Bookings
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: bookings found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Bookings retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        customer_id:
+                          type: integer
+                        ticket_id:
+                          type: integer
+                        quantity:
+                          type: integer
+                        total_price:
+                          type: number
+                          format: float
+                        status:
+                          type: string
+                          enum:
+                          - pending
+                          - confirmed
+                          - cancelled
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a booking
+      tags:
+      - Bookings
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: booking created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 201
+                      message:
+                        type: string
+                        example: Booking created successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      customer_id:
+                        type: integer
+                      ticket_id:
+                        type: integer
+                      quantity:
+                        type: integer
+                      total_price:
+                        type: number
+                        format: float
+                      status:
+                        type: string
+                        enum:
+                        - pending
+                        - confirmed
+                        - cancelled
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking:
+                  type: object
+                  properties:
+                    ticket_id:
+                      type: integer
+                      example: 1
+                    quantity:
+                      type: integer
+                      example: 2
+                  required:
+                  - ticket_id
+                  - quantity
+  "/api/v1/bookings/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Get booking details
+      tags:
+      - Bookings
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: booking found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Booking retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      customer_id:
+                        type: integer
+                      ticket_id:
+                        type: integer
+                      quantity:
+                        type: integer
+                      total_price:
+                        type: number
+                        format: float
+                      status:
+                        type: string
+                        enum:
+                        - pending
+                        - confirmed
+                        - cancelled
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: booking not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/bookings/{id}/cancel":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    post:
+      summary: Cancel booking
+      tags:
+      - Bookings
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: booking cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Booking cancelled successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      customer_id:
+                        type: integer
+                      ticket_id:
+                        type: integer
+                      quantity:
+                        type: integer
+                      total_price:
+                        type: number
+                        format: float
+                      status:
+                        type: string
+                        enum:
+                        - cancelled
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: booking not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/events/{event_id}/bookings":
+    get:
+      summary: List all bookings for an event
+      tags:
+      - Event Bookings
+      description: Returns all bookings for a specific event (Event Organizer only)
+      security:
+      - bearer_auth: []
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: bookings found
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden - not the event organizer
+        '404':
+          description: event not found
+  "/api/v1/events":
+    get:
+      summary: List all events
+      tags:
+      - Events
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: events found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Events retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        venue:
+                          type: string
+                        event_date:
+                          type: string
+                          format: date-time
+                        event_organizer_id:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create an event
+      tags:
+      - Events
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 201
+                      message:
+                        type: string
+                        example: Event created successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      venue:
+                        type: string
+                      event_date:
+                        type: string
+                        format: date-time
+                      event_organizer_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: Tech Conference 2025
+                    description:
+                      type: string
+                      example: Annual technology conference
+                    venue:
+                      type: string
+                      example: Convention Center
+                    event_date:
+                      type: string
+                      format: date-time
+                      example: '2025-12-31T23:59:59Z'
+                  required:
+                  - title
+                  - description
+                  - venue
+                  - event_date
+  "/api/v1/events/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Get event details
+      tags:
+      - Events
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: event found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Event retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      venue:
+                        type: string
+                      event_date:
+                        type: string
+                        format: date-time
+                      event_organizer_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '404':
+          description: event not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Update event
+      tags:
+      - Events
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: event updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Event updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      venue:
+                        type: string
+                      event_date:
+                        type: string
+                        format: date-time
+                      event_organizer_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: event not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                event:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    venue:
+                      type: string
+                    event_date:
+                      type: string
+                      format: date-time
+    delete:
+      summary: Delete event
+      tags:
+      - Events
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: event deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Event deleted successfully.
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: event not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+  "/api/v1/events/{event_id}/tickets":
+    parameters:
+    - name: event_id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: List tickets for an event
+      tags:
+      - Tickets
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: tickets found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Tickets retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        category:
+                          type: string
+                        price:
+                          type: number
+                          format: float
+                        quantity:
+                          type: integer
+                        event_id:
+                          type: integer
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: event not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create tickets for an event
+      tags:
+      - Tickets
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: ticket created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 201
+                      message:
+                        type: string
+                        example: Ticket created successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      category:
+                        type: string
+                      price:
+                        type: number
+                        format: float
+                      quantity:
+                        type: integer
+                      event_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: event not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticket:
+                  type: object
+                  properties:
+                    category:
+                      type: string
+                      example: VIP
+                    price:
+                      type: number
+                      format: float
+                      example: 100.0
+                    quantity:
+                      type: integer
+                      example: 50
+                  required:
+                  - category
+                  - price
+                  - quantity
+  "/api/v1/events/{event_id}/tickets/{id}":
+    parameters:
+    - name: event_id
+      in: path
+      required: true
+      schema:
+        type: integer
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      summary: Get ticket details
+      tags:
+      - Tickets
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: ticket found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Ticket retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      category:
+                        type: string
+                      price:
+                        type: number
+                        format: float
+                      quantity:
+                        type: integer
+                      event_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: ticket not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+    put:
+      summary: Update ticket
+      tags:
+      - Tickets
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: ticket updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Ticket updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      category:
+                        type: string
+                      price:
+                        type: number
+                        format: float
+                      quantity:
+                        type: integer
+                      event_id:
+                        type: integer
+                      created_at:
+                        type: string
+                        format: date-time
+                      updated_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: ticket not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ticket:
+                  type: object
+                  properties:
+                    category:
+                      type: string
+                    price:
+                      type: number
+                      format: float
+                    quantity:
+                      type: integer
+    delete:
+      summary: Delete ticket
+      tags:
+      - Tickets
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: ticket deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      message:
+                        type: string
+                        example: Ticket deleted successfully.
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '403':
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+        '404':
+          description: ticket not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/error"
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT token obtained from login endpoint. Use format: Bearer <token>'
+  schemas:
+    error:
+      type: object
+      properties:
+        status:
+          type: object
+          properties:
+            code:
+              type: integer
+            message:
+              type: string
+        errors:
+          type: array
+          items:
+            type: string
+security:
+- bearer_auth: []

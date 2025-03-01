@@ -1,0 +1,32 @@
+graph TB
+    subgraph "Public Routes"
+        A["/api/v1/event_organizers (POST)"] --> Register_Organizer["Register as Event Organizer"]
+        B["/api/v1/event_organizers/sign_in (POST)"] --> Login_Organizer["Login as Event Organizer"]
+        C["/api/v1/customers (POST)"] --> Register_Customer["Register as Customer"]
+        D["/api/v1/customers/sign_in (POST)"] --> Login_Customer["Login as Customer"]
+    end
+
+    subgraph "Event Organizer Routes"
+        E["/api/v1/events (POST)"] --> Create_Event["Create New Event"]
+        F["/api/v1/events/{id} (PUT)"] --> Update_Event["Update Event"]
+        G["/api/v1/events/{id} (DELETE)"] --> Delete_Event["Delete Event"]
+        H["/api/v1/events/{event_id}/tickets (POST)"] --> Create_Tickets["Create Tickets"]
+        I["/api/v1/events/{event_id}/tickets/{id} (PUT)"] --> Update_Tickets["Update Tickets"]
+        J["/api/v1/events/{event_id}/tickets/{id} (DELETE)"] --> Delete_Tickets["Delete Tickets"]
+        K["/api/v1/events (GET)"] --> List_Own_Events["List Own Events"]
+        L["/api/v1/events/{id}/bookings (GET)"] --> View_Event_Bookings["View Event Bookings"]
+    end
+
+    subgraph "Customer Routes"
+        M["/api/v1/events (GET)"] --> Browse_Events["Browse All Events"]
+        N["/api/v1/events/{id} (GET)"] --> View_Event_Details["View Event Details"]
+        O["/api/v1/events/{event_id}/tickets (GET)"] --> View_Tickets["View Available Tickets"]
+        P["/api/v1/bookings (POST)"] --> Create_Booking["Create Booking"]
+        Q["/api/v1/bookings (GET)"] --> View_Own_Bookings["View Own Bookings"]
+        R["/api/v1/bookings/{id} (GET)"] --> View_Booking_Details["View Booking Details"]
+        S["/api/v1/bookings/{id}/cancel (POST)"] --> Cancel_Booking["Cancel Booking"]
+    end
+
+    style Public_Routes fill:#f9f,stroke:#333,stroke-width:2px
+    style Event_Organizer_Routes fill:#bbf,stroke:#333,stroke-width:2px
+    style Customer_Routes fill:#bfb,stroke:#333,stroke-width:2px
